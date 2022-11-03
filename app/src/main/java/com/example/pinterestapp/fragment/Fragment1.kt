@@ -1,60 +1,111 @@
 package com.example.pinterestapp.fragment
 
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.comix.overwatch.HiveProgressView
 import com.example.pinterestapp.R
+import com.example.pinterestapp.adapter.RetrofitGitAdapter
+import com.example.pinterestapp.databinding.Fragment1Binding
+import com.example.pinterestapp.databinding.FragmentHomeBinding
+import com.example.pinterestapp.model.ResponseItem
+import com.example.pinterestapp.networking.RetrofitHttp
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [Fragment1.newInstance] factory method to
- * create an instance of this fragment.
- */
 class Fragment1 : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private var _binding: Fragment1Binding? = null
+    private val binding get() = _binding!!
+    var photos = ArrayList<ResponseItem>()
+    private lateinit var retrofitGetAdapter: RetrofitGitAdapter
+
+    var progressBar1 = binding.progressBar1
+    var swipeRefreshLayout = binding.swipeRefresh
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_1, container, false)
+    ): View {
+        _binding = Fragment1Binding.inflate(inflater, container, false)
+        return binding.root
+        initViews()
+
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment Fragment1.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            Fragment1().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    @SuppressLint("NotifyDataSetChanged")
+    private fun initViews() {
+
+        var recyclerView = binding.recyclerView1
+
+        apiPosterListRetrofitFragment1()
+
+        swipeRefreshLayout.setOnRefreshListener {
+            swipeRefreshLayout.isRefreshing = false
+            photos.clear()
+            apiPosterListRetrofitFragment1()
+            retrofitGetAdapter.notifyDataSetChanged()
+        }
+
+        recyclerView.setHasFixedSize(true)
+        val layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+        layoutManager.gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_NONE
+        recyclerView.layoutManager = layoutManager
+        retrofitGetAdapter = RetrofitGitAdapter(requireContext(),photos)
+        recyclerView.adapter = retrofitGetAdapter
+
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                if (!recyclerView.canScrollVertically(1)) {
+                    apiPosterListRetrofitFragment1()
                 }
             }
+        })
+
+        retrofitGetAdapter.onItemClick = {
+            findNavController().navigate(R.id.detailFragment)
+        }
+
+
     }
+
+    private fun apiPosterListRetrofitFragment1() {
+        progressBar1.visibility = View.VISIBLE
+        RetrofitHttp.posterService.listPhotos()
+            .enqueue(object : Callback<ArrayList<ResponseItem>> {
+                @SuppressLint("NotifyDataSetChanged")
+                override fun onResponse(
+                    call: Call<ArrayList<ResponseItem>>,
+                    response: Response<ArrayList<ResponseItem>>
+                ) {
+                    if (response.body() != null)
+                        photos.addAll(response.body()!!)
+                    else
+                        Toast.makeText(context, "Limit has ended", Toast.LENGTH_SHORT).show()
+                    swipeRefreshLayout.isRefreshing = false
+                    progressBar1.visibility = View.GONE
+                    retrofitGetAdapter.notifyDataSetChanged()
+                }
+
+                override fun onFailure(call: Call<ArrayList<ResponseItem>>, t: Throwable) {
+                    Log.d("@@@", t.message.toString())
+                    Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show()
+                    progressBar1.visibility = View.GONE
+                }
+            })
+    }
+
 }

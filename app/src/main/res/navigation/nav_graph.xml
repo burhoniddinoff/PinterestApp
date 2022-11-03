@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/mainFragment">
 
@@ -12,4 +13,18 @@
         android:id="@+id/mainFragment"
         android:name="com.example.pinterestapp.fragment.MainFragment"
         android:label="MainFragment" />
+    <fragment
+        android:id="@+id/detailFragment"
+        android:name="com.example.pinterestapp.fragment.DetailFragment"
+        android:label="fragment_detail"
+        tools:layout="@layout/fragment_detail" >
+        <action
+            android:id="@+id/action_detailFragment_to_fullScreenFragment"
+            app:destination="@id/fullScreenFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/fullScreenFragment"
+        android:name="com.example.pinterestapp.fragment.FullScreenFragment"
+        android:label="fragment_full_screen"
+        tools:layout="@layout/fragment_full_screen" />
 </navigation>
