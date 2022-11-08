@@ -27,6 +27,7 @@ import com.example.pinterestapp.R
 import com.example.pinterestapp.adapter.RetrofitGetAdapter
 import com.example.pinterestapp.database.MyDatabase
 import com.example.pinterestapp.database.SaveImage
+import com.example.pinterestapp.databinding.FragmentDetailBinding
 import com.example.pinterestapp.model.ResponseItem
 import com.example.pinterestapp.networking.RetrofitHttp
 import com.example.pinterestapp.util.GetDetailsInfo
@@ -44,55 +45,36 @@ import java.io.OutputStream
 
 class DetailFragment : Fragment() {
 
-    var count = 1
-    private lateinit var saveCardView: CircularRevealCardView
-    lateinit var textView: TextView
-    private lateinit var viewBtn: CircularRevealCardView
-    lateinit var imageView: ImageView
-    private lateinit var nestedScrollView: NestedScrollView
-    private lateinit var detailsRecyclerView: RecyclerView
+    private var _binding: FragmentDetailBinding? = null
+    private val binding get() = _binding!!
+    private val myDatabase by lazy { MyDatabase.getInstance(requireContext()) }
     private lateinit var retrofitGetAdapter: RetrofitGetAdapter
-    lateinit var backBtn: ImageView
-    private lateinit var shareImageView: ImageView
-    private lateinit var profileName: TextView
-    private lateinit var profileSubscriber: TextView
-    private lateinit var profileImage: ShapeableImageView
-    private lateinit var myDatabase: MyDatabase
+
+
+    var count = 1
+
 
     var photos = ArrayList<ResponseItem>()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_detail, container, false)
-        initViews(view)
-        return view
+    ): View {
+        _binding = FragmentDetailBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     private fun initViews(view: View) {
-        nestedScrollView = view.findViewById(R.id.nestedScroll)
-        textView = view.findViewById(R.id.text_view)
-        imageView = view.findViewById(R.id.image_view)
-        detailsRecyclerView = view.findViewById(R.id.detailRecycler)
-        backBtn = view.findViewById(R.id.back_btn)
-        saveCardView = view.findViewById(R.id.saveCard)
-        viewBtn = view.findViewById(R.id.viewCard)
-        shareImageView = view.findViewById(R.id.shareImage)
-        profileName = view.findViewById(R.id.profileName)
-        profileImage = view.findViewById(R.id.profileImage)
-        profileSubscriber = view.findViewById(R.id.profileSubscriber)
+        val imageView = binding.imageView
 
-        myDatabase = MyDatabase.getInstance(requireContext())
-
-        detailsRecyclerView.setHasFixedSize(true)
-        detailsRecyclerView.layoutManager =
+        binding.detailRecycler.setHasFixedSize(true)
+        binding.detailRecycler.layoutManager =
             StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-        detailsRecyclerView.isNestedScrollingEnabled = false
+        binding.detailRecycler.isNestedScrollingEnabled = false
 
         if (GetDetailsInfo.title.isNullOrEmpty()) {
-            textView.text = GetDetailsInfo.title
+            binding.textView.text = GetDetailsInfo.title
         } else {
-            textView.text = getString(R.string.picture)
+            binding.textView.text = getString(R.string.picture)
         }
 
         Glide.with(view)
@@ -101,26 +83,26 @@ class DetailFragment : Fragment() {
             .placeholder(RandomColor.randomColor())
             .into(imageView)
 
-        backBtn.setOnClickListener {
+        binding.backBtn.setOnClickListener {
             findNavController().popBackStack()
         }
-        viewBtn.setOnClickListener {
+        binding.viewCard.setOnClickListener {
             findNavController().navigate(R.id.action_detailFragment_to_fullScreenFragment)
         }
 
-        shareImageView.setOnClickListener {
+        binding.shareImage.setOnClickListener {
             shareImageView()
         }
 
         apiPosterListRetrofitFragment()
         refreshAdapter(photos)
 
-        saveCardView.setOnClickListener {
+        binding.saveCard.setOnClickListener {
             showBottomSheet()
         }
 
-        nestedScrollView.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, _, scrollY, _, _ ->
-            if (v.getChildAt(0).bottom <= (nestedScrollView.height + scrollY)) {
+        binding.nestedScroll.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, _, scrollY, _, _ ->
+            if (v.getChildAt(0).bottom <= (binding.nestedScroll.height + scrollY)) {
                 count++
                 apiPosterListRetrofitFragment()
             }
@@ -148,7 +130,7 @@ class DetailFragment : Fragment() {
 
     private fun refreshAdapter(photos: ArrayList<ResponseItem>) {
         retrofitGetAdapter = RetrofitGetAdapter(requireContext(), photos)
-        detailsRecyclerView.adapter = retrofitGetAdapter
+        binding.detailRecycler.adapter = retrofitGetAdapter
         retrofitGetAdapter.onItemClick = {
             findNavController().navigate(R.id.detailFragment)
         }
@@ -162,7 +144,7 @@ class DetailFragment : Fragment() {
         dialog.setContentView(view)
 
         textGallery.setOnClickListener {
-            saveToGallery(imageView)
+            saveToGallery(binding.imageView)
             dialog.dismiss()
         }
         textProfile.setOnClickListener {
@@ -196,7 +178,7 @@ class DetailFragment : Fragment() {
     }
 
     private fun shareImageView() {
-        val bitmapDrawable = imageView.drawable as BitmapDrawable
+        val bitmapDrawable = binding.imageView.drawable as BitmapDrawable
         val bitmap = bitmapDrawable.bitmap
         val bitmapPath = MediaStore.Images.Media.insertImage(
             requireContext().contentResolver,

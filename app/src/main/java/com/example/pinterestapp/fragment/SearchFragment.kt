@@ -62,23 +62,23 @@ class SearchFragment : Fragment() {
     private fun apiPosterListRetrofitFragmentSearch() {
         progressBarSearch.isVisible = true
 
-//        RetrofitHttp.posterService.getCollections()
-//            .enqueue(object : Callback<List<CollectionsModelItem>> {
-//                @SuppressLint("NotifyDataSetChanged")
-//                override fun onResponse(
-//                    call: Call<List<CollectionsModelItem>>,
-//                    response: Response<List<CollectionsModelItem>>
-//                ) {
-//                    if (response.isSuccessful) {
-//                        searchAdapter.submitData(response.body()!!)
-//                        progressBarSearch.isVisible = false
-//                    }
-//                }
-//
-//                override fun onFailure(call: Call<List<CollectionsModelItem>>, t: Throwable) {
-//                    t.printStackTrace()
-//                }
-//            })
+/*        RetrofitHttp.posterService.getCollections()
+            .enqueue(object : Callback<List<CollectionsModelItem>> {
+                @SuppressLint("NotifyDataSetChanged")
+                override fun onResponse(
+                    call: Call<List<CollectionsModelItem>>,
+                    response: Response<List<CollectionsModelItem>>
+                ) {
+                    if (response.isSuccessful) {
+                        searchAdapter.submitData(response.body()!!)
+                        progressBarSearch.isVisible = false
+                    }
+                }
+
+                override fun onFailure(call: Call<List<CollectionsModelItem>>, t: Throwable) {
+                    t.printStackTrace()
+                }
+            })*/
     }
 
     private fun refreshAdapter() {

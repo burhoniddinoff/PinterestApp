@@ -39,6 +39,7 @@ class Fragment1 : Fragment() {
         return view
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun initViews(view: View) {
         recyclerView = view.findViewById(R.id.recyclerView1)
         swipeRefreshLayout = view.findViewById(R.id.swipe_refresh)
