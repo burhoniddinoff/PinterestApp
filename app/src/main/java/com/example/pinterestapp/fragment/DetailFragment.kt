@@ -24,11 +24,9 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.pinterestapp.R
-import com.example.pinterestapp.adapter.RetrofitGitAdapter
+import com.example.pinterestapp.adapter.RetrofitGetAdapter
 import com.example.pinterestapp.database.MyDatabase
 import com.example.pinterestapp.database.SaveImage
-import com.example.pinterestapp.databinding.Fragment1Binding
-import com.example.pinterestapp.databinding.FragmentDetailBinding
 import com.example.pinterestapp.model.ResponseItem
 import com.example.pinterestapp.networking.RetrofitHttp
 import com.example.pinterestapp.util.GetDetailsInfo
@@ -46,31 +44,45 @@ import java.io.OutputStream
 
 class DetailFragment : Fragment() {
 
-
-    private var _binding: FragmentDetailBinding? = null
-    private val binding get() = _binding!!
     var count = 1
-    lateinit var nestedScrollView: NestedScrollView
-    lateinit var detailsRecyclerView: RecyclerView
-    lateinit var retrofitGetAdapter: RetrofitGitAdapter
+    private lateinit var saveCardView: CircularRevealCardView
+    lateinit var textView: TextView
+    private lateinit var viewBtn: CircularRevealCardView
+    lateinit var imageView: ImageView
+    private lateinit var nestedScrollView: NestedScrollView
+    private lateinit var detailsRecyclerView: RecyclerView
+    private lateinit var retrofitGetAdapter: RetrofitGetAdapter
+    lateinit var backBtn: ImageView
+    private lateinit var shareImageView: ImageView
+    private lateinit var profileName: TextView
+    private lateinit var profileSubscriber: TextView
+    private lateinit var profileImage: ShapeableImageView
     private lateinit var myDatabase: MyDatabase
-    private val photos = ArrayList<ResponseItem>()
 
+    var photos = ArrayList<ResponseItem>()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentDetailBinding.inflate(inflater, container, false)
-        return binding.root
-        initViews()
+    ): View? {
+        val view = inflater.inflate(R.layout.fragment_detail, container, false)
+        initViews(view)
+        return view
     }
 
-    private fun initViews() {
-
-        val view: View
+    private fun initViews(view: View) {
+        nestedScrollView = view.findViewById(R.id.nestedScroll)
+        textView = view.findViewById(R.id.text_view)
+        imageView = view.findViewById(R.id.image_view)
+        detailsRecyclerView = view.findViewById(R.id.detailRecycler)
+        backBtn = view.findViewById(R.id.back_btn)
+        saveCardView = view.findViewById(R.id.saveCard)
+        viewBtn = view.findViewById(R.id.viewCard)
+        shareImageView = view.findViewById(R.id.shareImage)
+        profileName = view.findViewById(R.id.profileName)
+        profileImage = view.findViewById(R.id.profileImage)
+        profileSubscriber = view.findViewById(R.id.profileSubscriber)
 
         myDatabase = MyDatabase.getInstance(requireContext())
-        val imageView: ImageView = binding.imageView
 
         detailsRecyclerView.setHasFixedSize(true)
         detailsRecyclerView.layoutManager =
@@ -78,32 +90,32 @@ class DetailFragment : Fragment() {
         detailsRecyclerView.isNestedScrollingEnabled = false
 
         if (GetDetailsInfo.title.isNullOrEmpty()) {
-            binding.textView.text = GetDetailsInfo.title
+            textView.text = GetDetailsInfo.title
         } else {
-            binding.textView.text = getString(R.string.picture)
+            textView.text = getString(R.string.picture)
         }
 
-        Glide.with(imageView) // error
+        Glide.with(view)
             .load(GetDetailsInfo.links)
             .diskCacheStrategy(DiskCacheStrategy.ALL)
             .placeholder(RandomColor.randomColor())
             .into(imageView)
 
-        binding.backBtn.setOnClickListener {
+        backBtn.setOnClickListener {
             findNavController().popBackStack()
         }
-        binding.viewCard.setOnClickListener {
+        viewBtn.setOnClickListener {
             findNavController().navigate(R.id.action_detailFragment_to_fullScreenFragment)
         }
 
-        binding.shareImage.setOnClickListener {
+        shareImageView.setOnClickListener {
             shareImageView()
         }
 
         apiPosterListRetrofitFragment()
         refreshAdapter(photos)
 
-        binding.saveCard.setOnClickListener {
+        saveCardView.setOnClickListener {
             showBottomSheet()
         }
 
@@ -113,7 +125,6 @@ class DetailFragment : Fragment() {
                 apiPosterListRetrofitFragment()
             }
         })
-
     }
 
     private fun apiPosterListRetrofitFragment() {
@@ -134,8 +145,9 @@ class DetailFragment : Fragment() {
             })
     }
 
+
     private fun refreshAdapter(photos: ArrayList<ResponseItem>) {
-        retrofitGetAdapter = RetrofitGitAdapter(requireContext(), photos)
+        retrofitGetAdapter = RetrofitGetAdapter(requireContext(), photos)
         detailsRecyclerView.adapter = retrofitGetAdapter
         retrofitGetAdapter.onItemClick = {
             findNavController().navigate(R.id.detailFragment)
@@ -150,7 +162,7 @@ class DetailFragment : Fragment() {
         dialog.setContentView(view)
 
         textGallery.setOnClickListener {
-            saveToGallery(binding.imageView)
+            saveToGallery(imageView)
             dialog.dismiss()
         }
         textProfile.setOnClickListener {
@@ -184,7 +196,7 @@ class DetailFragment : Fragment() {
     }
 
     private fun shareImageView() {
-        val bitmapDrawable = binding.imageView.drawable as BitmapDrawable
+        val bitmapDrawable = imageView.drawable as BitmapDrawable
         val bitmap = bitmapDrawable.bitmap
         val bitmapPath = MediaStore.Images.Media.insertImage(
             requireContext().contentResolver,
@@ -260,5 +272,4 @@ class DetailFragment : Fragment() {
     private fun toasty(msg: String) {
         Toasty.success(requireContext(), msg, Toasty.LENGTH_LONG, true).show()
     }
-
 }

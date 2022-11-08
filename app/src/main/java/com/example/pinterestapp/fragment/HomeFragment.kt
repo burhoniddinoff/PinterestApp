@@ -6,32 +6,29 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.viewpager2.widget.ViewPager2
+import com.example.pinterestapp.R
 import com.example.pinterestapp.adapter.HomeAdapter
-import com.example.pinterestapp.databinding.FragmentHomeBinding
 import com.google.android.material.tabs.TabLayout
 
 class HomeFragment : Fragment() {
 
-    private var _binding: FragmentHomeBinding? = null
-    private val binding get() = _binding!!
+    var viewPager2: ViewPager2? = null
     lateinit var homeAdapter: HomeAdapter
+    lateinit var tabLayout: TabLayout
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        return binding.root
-
-        initViews()
-
+    ): View? {
+        val view = inflater.inflate(R.layout.fragment_home, container, false)
+        initViews(view)
+        return view
     }
-
-    private fun initViews() {
+    private fun initViews(view: View) {
+        viewPager2 = view.findViewById(R.id.view_pager22)
+        tabLayout = view.findViewById(R.id.tabLayout22)
         homeAdapter = HomeAdapter(childFragmentManager, lifecycle)
-        binding.viewPager22.adapter = homeAdapter
-
-        val tabLayout = binding.tabLayout22
+        viewPager2!!.adapter = homeAdapter
 
         tabLayout.addTab(tabLayout.newTab().setText("All"))
         tabLayout.addTab(tabLayout.newTab().setText("Wallpapers"))
@@ -42,7 +39,7 @@ class HomeFragment : Fragment() {
 
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
-                binding.viewPager22.currentItem = tab!!.position
+                viewPager2!!.currentItem = tab!!.position
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
@@ -50,12 +47,10 @@ class HomeFragment : Fragment() {
             override fun onTabReselected(tab: TabLayout.Tab?) {}
         })
 
-        binding.viewPager22.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+        viewPager2!!.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 tabLayout.selectTab(tabLayout.getTabAt(position))
             }
         })
-
     }
-
 }

@@ -8,16 +8,48 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.pinterestapp.fragment.HomeFragment"
-        android:label="HomeFragment" />
+        android:label="HomeFragment">
+        <action
+            android:id="@+id/action_homeFragment_to_fragment1"
+            app:destination="@id/fragment1" />
+        <action
+            android:id="@+id/action_homeFragment_to_fragment2"
+            app:destination="@id/fragment2" />
+        <action
+            android:id="@+id/action_homeFragment_to_fragment3"
+            app:destination="@id/fragment3" />
+        <action
+            android:id="@+id/action_homeFragment_to_fragment4"
+            app:destination="@id/fragment4" />
+        <action
+            android:id="@+id/action_homeFragment_to_fragment5"
+            app:destination="@id/fragment5" />
+        <action
+            android:id="@+id/action_homeFragment_to_fragment6"
+            app:destination="@id/fragment6" />
+    </fragment>
     <fragment
         android:id="@+id/mainFragment"
         android:name="com.example.pinterestapp.fragment.MainFragment"
-        android:label="MainFragment" />
+        android:label="MainFragment">
+        <action
+            android:id="@+id/action_mainFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_messageFragment"
+            app:destination="@id/messageFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+    </fragment>
     <fragment
         android:id="@+id/detailFragment"
         android:name="com.example.pinterestapp.fragment.DetailFragment"
         android:label="fragment_detail"
-        tools:layout="@layout/fragment_detail" >
+        tools:layout="@layout/fragment_detail">
         <action
             android:id="@+id/action_detailFragment_to_fullScreenFragment"
             app:destination="@id/fullScreenFragment" />
@@ -26,5 +58,89 @@
         android:id="@+id/fullScreenFragment"
         android:name="com.example.pinterestapp.fragment.FullScreenFragment"
         android:label="fragment_full_screen"
-        tools:layout="@layout/fragment_full_screen" />
+        tools:layout="@layout/fragment_full_screen">
+        <action
+            android:id="@+id/action_fullScreenFragment_to_detailFragment"
+            app:destination="@id/detailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragment1"
+        android:name="com.example.pinterestapp.fragment.Fragment1"
+        android:label="Fragment1">
+        <action
+            android:id="@+id/action_fragment1_to_detailFragment"
+            app:destination="@id/detailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragment2"
+        android:name="com.example.pinterestapp.fragment.Fragment2"
+        android:label="Fragment2">
+        <action
+            android:id="@+id/action_fragment2_to_detailFragment"
+            app:destination="@id/detailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragment3"
+        android:name="com.example.pinterestapp.fragment.Fragment3"
+        android:label="Fragment3">
+        <action
+            android:id="@+id/action_fragment3_to_detailFragment"
+            app:destination="@id/detailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragment4"
+        android:name="com.example.pinterestapp.fragment.Fragment4"
+        android:label="Fragment4">
+        <action
+            android:id="@+id/action_fragment4_to_detailFragment"
+            app:destination="@id/detailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragment5"
+        android:name="com.example.pinterestapp.fragment.Fragment5"
+        android:label="Fragment5">
+        <action
+            android:id="@+id/action_fragment5_to_detailFragment"
+            app:destination="@id/detailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragment6"
+        android:name="com.example.pinterestapp.fragment.Fragment6"
+        android:label="Fragment6">
+        <action
+            android:id="@+id/action_fragment6_to_detailFragment"
+            app:destination="@id/detailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/messageFragment"
+        android:name="com.example.pinterestapp.fragment.MessageFragment"
+        android:label="MessageFragment">
+        <action
+            android:id="@+id/action_messageFragment_to_updateFragment"
+            app:destination="@id/updateFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.pinterestapp.fragment.ProfileFragment"
+        android:label="ProfileFragment" />
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.example.pinterestapp.fragment.SearchFragment"
+        android:label="SearchFragment">
+        <action
+            android:id="@+id/action_searchFragment_to_searchResultFragment"
+            app:destination="@id/searchResultFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/updateFragment"
+        android:name="com.example.pinterestapp.fragment.UpdateFragment"
+        android:label="UpdateFragment" />
+    <fragment
+        android:id="@+id/searchResultFragment"
+        android:name="com.example.pinterestapp.fragment.SearchResultFragment"
+        android:label="SearchResultFragment">
+        <action
+            android:id="@+id/action_searchResultFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
+    </fragment>
 </navigation>

@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.fragment.app.FragmentActivity
+import androidx.viewpager2.widget.ViewPager2
 import com.example.pinterestapp.R
 import com.example.pinterestapp.adapter.ViewPagerAdapter
 import com.example.pinterestapp.databinding.ActivityMainBinding
@@ -17,40 +18,43 @@ import com.google.android.material.tabs.TabLayoutMediator
 
 class MainFragment : Fragment() {
 
-    private var _binding: FragmentMainBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var tabMain: TabLayout
+    private lateinit var viewPager: ViewPager2
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentMainBinding.inflate(inflater, container, false)
-        return binding.root
+    ): View? {
+        val view = inflater.inflate(R.layout.fragment_main, container, false)
 
-        initViews()
+        initViews(view)
+        return view
     }
 
-    private fun initViews() {
+    private fun initViews(view: View) {
 
-        binding.tabMain.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+        tabMain = view.findViewById(R.id.tab_main)
+        viewPager = view.findViewById(R.id.view_pager2)
 
-            override fun onTabSelected(tab: TabLayout.Tab?) {
-                when (tab?.position) {
+        tabMain.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                when (tab.position) {
                     0 -> {
                         tab.customView?.findViewById<ImageView>(R.id.image_tab_main)
-                            ?.setImageResource(R.drawable.ic_baseline_home_24)
+                            ?.setImageResource(R.drawable.home_selected_png)
                     }
                     1 -> {
                         tab.customView?.findViewById<ImageView>(R.id.image_tab_main)
-                            ?.setImageResource(R.drawable.ic_baseline_search)
+                            ?.setImageResource(R.drawable.search_selected_png)
                     }
                     2 -> {
                         tab.customView?.findViewById<ImageView>(R.id.image_tab_main)
-                            ?.setImageResource(R.drawable.ic_baseline_chat_24)
+                            ?.setImageResource(R.drawable.chat_selected_png)
                     }
                     3 -> {
                         tab.customView?.findViewById<ImageView>(R.id.image_tab_main)
-                            ?.setImageResource(R.drawable.ic_baseline_person_24)
+                            ?.setImageResource(R.drawable.user)
                     }
                 }
             }
@@ -59,36 +63,37 @@ class MainFragment : Fragment() {
                 when (tab?.position) {
                     0 -> {
                         tab.customView?.findViewById<ImageView>(R.id.image_tab_main)
-                            ?.setImageResource(R.drawable.ic_baseline_home)
+                            ?.setImageResource(R.drawable.home_unselected_png)
                     }
                     1 -> {
                         tab.customView?.findViewById<ImageView>(R.id.image_tab_main)
-                            ?.setImageResource(R.drawable.ic_baseline_search_24)
+                            ?.setImageResource(R.drawable.search_unselected_png)
                     }
                     2 -> {
                         tab.customView?.findViewById<ImageView>(R.id.image_tab_main)
-                            ?.setImageResource(R.drawable.ic_baseline_chat_bubble_outline_24)
+                            ?.setImageResource(R.drawable.chat_unselected_png)
                     }
                     3 -> {
                         tab.customView?.findViewById<ImageView>(R.id.image_tab_main)
-                            ?.setImageResource(R.drawable.ic_baseline_person_outline_24)
+                            ?.setImageResource(R.drawable.use)
                     }
                 }
             }
 
             override fun onTabReselected(tab: TabLayout.Tab?) {}
         })
+        val viewPager2 = viewPager
 
         val adapter = ViewPagerAdapter(childFragmentManager, lifecycle)
 
-        binding.viewPager2.adapter = adapter
-        binding.viewPager2.isUserInputEnabled = false
+        viewPager2.adapter = adapter
+
+        viewPager2.isUserInputEnabled = false
     }
 
     override fun onResume() {
         super.onResume()
-        val tabLayout = binding.tabMain
-        val viewPager = binding.viewPager2
+        val tabLayout = tabMain
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
 
             val inflate =
@@ -98,24 +103,19 @@ class MainFragment : Fragment() {
 
             when (position) {
                 0 -> {
-                    imageView.setImageResource(R.drawable.ic_baseline_home)
+                    imageView.setImageResource(R.drawable.home_unselected_png)
                 }
                 1 -> {
-                    imageView.setImageResource(R.drawable.ic_baseline_search_24)
+                    imageView.setImageResource(R.drawable.search_unselected_png)
                 }
                 2 -> {
-                    imageView.setImageResource(R.drawable.ic_baseline_chat_bubble_outline_24)
+                    imageView.setImageResource(R.drawable.chat_unselected_png)
                 }
                 3 -> {
-                    imageView.setImageResource(R.drawable.ic_baseline_person_outline_24)
+                    imageView.setImageResource(R.drawable.use)
                 }
+
             }
-
-        }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+        }.attach()
     }
 }

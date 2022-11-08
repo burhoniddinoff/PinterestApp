@@ -12,8 +12,8 @@ import com.example.pinterestapp.model.ResponseItem
 import com.example.pinterestapp.util.GetDetailsInfo
 import com.example.pinterestapp.util.RandomColor
 
-class RetrofitGitAdapter(var context: Context, var items: ArrayList<ResponseItem>) :
-    RecyclerView.Adapter<RetrofitGitAdapter.HomeViewHolder>() {
+class RetrofitGetAdapter(var context: Context, var items: ArrayList<ResponseItem>) :
+    RecyclerView.Adapter<RetrofitGetAdapter.HomeViewHolder>() {
 
 
     lateinit var onItemClick: (ResponseItem) -> Unit

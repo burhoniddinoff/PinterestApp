@@ -1,60 +1,94 @@
 package com.example.pinterestapp.fragment
 
+import android.annotation.SuppressLint
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.TextView
+import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.comix.overwatch.HiveProgressView
 import com.example.pinterestapp.R
+import com.example.pinterestapp.adapter.CategoriesAdapter
+import com.example.pinterestapp.modelSearchFrag.CollectionsModelItem
+import com.example.pinterestapp.networking.RetrofitHttp
+import com.example.pinterestapp.util.GetDetailsInfo
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [SearchFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class SearchFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    lateinit var recyclerViewSearch: RecyclerView
+    private lateinit var searchAdapter: CategoriesAdapter
+    lateinit var progressBarSearch: HiveProgressView
+    private lateinit var textView: TextView
+    private lateinit var linearLayout: LinearLayout
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_search, container, false)
+        val view = inflater.inflate(R.layout.fragment_search, container, false)
+        initViews(view)
+        return view
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment SearchFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            SearchFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    private fun initViews(view: View) {
+
+        recyclerViewSearch = view.findViewById(R.id.recyclerViewSearch)
+        textView = view.findViewById(R.id.textViewSearch)
+        progressBarSearch = view.findViewById(R.id.progress_bar_search)
+        linearLayout = view.findViewById(R.id.linearlayout)
+
+        linearLayout.setOnClickListener {
+            findNavController().navigate(R.id.searchResultFragment)
+        }
+
+        apiPosterListRetrofitFragmentSearch()
+        refreshAdapter()
+
+        recyclerViewSearch.setHasFixedSize(true)
+        recyclerViewSearch.layoutManager =
+            StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+    }
+
+    private fun apiPosterListRetrofitFragmentSearch() {
+        progressBarSearch.isVisible = true
+
+//        RetrofitHttp.posterService.getCollections()
+//            .enqueue(object : Callback<List<CollectionsModelItem>> {
+//                @SuppressLint("NotifyDataSetChanged")
+//                override fun onResponse(
+//                    call: Call<List<CollectionsModelItem>>,
+//                    response: Response<List<CollectionsModelItem>>
+//                ) {
+//                    if (response.isSuccessful) {
+//                        searchAdapter.submitData(response.body()!!)
+//                        progressBarSearch.isVisible = false
+//                    }
+//                }
+//
+//                override fun onFailure(call: Call<List<CollectionsModelItem>>, t: Throwable) {
+//                    t.printStackTrace()
+//                }
+//            })
+    }
+
+    private fun refreshAdapter() {
+        searchAdapter = CategoriesAdapter(requireContext())
+        recyclerViewSearch.adapter = searchAdapter
+        searchAdapter.photoClick = {
+            GetDetailsInfo.id = it.id
+            GetDetailsInfo.links = it.cover_photo.urls.small
+            GetDetailsInfo.title = it.title
+            findNavController().navigate(R.id.detailFragment)
+        }
     }
 }
